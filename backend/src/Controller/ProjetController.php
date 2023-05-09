@@ -135,6 +135,30 @@ class ProjetController extends AbstractController
     }
 
     /**
+     * @Route("/projets", name="tets", methods={"POST"})
+     */
+    public function test(ProductRepository $productRepository, Request $request)
+    {
+  
+        $produit = $productRepository->findByTest($request->request->get('nom'));
+
+        var_dump($produit);
+        // $data =  [
+        //     'id' => $produit->getId(),
+        //     'nom' => $produit->getName(),
+        //     'code' => $produit->getCode(),
+        //     'prix_achat' => $produit->getPrixAchat(),
+        //     'prix_vente' => $produit->getPrixVente(),
+        //     'date_peremtion' => $produit->getDatePeremtion(),
+        //     'date_fabrication' => $produit->getDateCreation(),
+        //     'categorie' => $produit->getCategory()->getName(),
+        //     'fournisseur' => $produit->getFournisseur()->getName(),
+        // ];
+  
+        return $this->json($produit);
+    }
+
+    /**
      * @Route("/projet/produit/{id}", name="project_show", methods={"GET"})
      */
     public function show(Product $produit): Response
@@ -217,10 +241,14 @@ class ProjetController extends AbstractController
         $produit->setPrixVente($request->request->get('prix_vente'));
         $produit->setDatePeremtion(new \DateTime($request->request->get('date_peremption')));
         $produit->setDateCreation(new \DateTime($request->request->get('date_fabrication')));
-        $categorie = $categorieRepository->find($request->request->get('categorie'));
-        $produit->setCategory($categorie);
-        $fournisseur = $fournisseurRepository->find($request->request->get('fournisseur'));
-        $produit->setFournisseur($fournisseur);
+        if ($request->request->get('categorie')) {
+            $categorie = $categorieRepository->find($request->request->get('categorie'));
+            $produit->setCategory($categorie);
+        }
+        if ($request->request->get('fournisseur')) {
+            $fournisseur = $fournisseurRepository->find($request->request->get('fournisseur'));
+            $produit->setFournisseur($fournisseur);
+        }
         $entityManager->flush();
   
         $data =  [

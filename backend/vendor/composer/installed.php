@@ -3,7 +3,7 @@
         'name' => '__root__',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'a7d8060401f5bbd69ace586e3d1b20822f7db852',
+        'reference' => '1223e2511d205eacf93117b5b83b67f86e2d7fba',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         '__root__' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'a7d8060401f5bbd69ace586e3d1b20822f7db852',
+            'reference' => '1223e2511d205eacf93117b5b83b67f86e2d7fba',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -342,6 +342,15 @@
             'provided' => array(
                 0 => '1.0|2.0',
             ),
+        ),
+        'sensio/framework-extra-bundle' => array(
+            'pretty_version' => 'v6.2.10',
+            'version' => '6.2.10.0',
+            'reference' => '2f886f4b31f23c76496901acaedfedb6936ba61f',
+            'type' => 'symfony-bundle',
+            'install_path' => __DIR__ . '/../sensio/framework-extra-bundle',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'symfony/cache' => array(
             'pretty_version' => 'v5.4.23',

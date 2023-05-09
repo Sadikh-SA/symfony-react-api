@@ -18,6 +18,7 @@
       <parameter key="SecurityBundle">Symfony\Bundle\SecurityBundle\SecurityBundle</parameter>
       <parameter key="LexikJWTAuthenticationBundle">Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle</parameter>
       <parameter key="NelmioCorsBundle">Nelmio\CorsBundle\NelmioCorsBundle</parameter>
+      <parameter key="SensioFrameworkExtraBundle">Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle</parameter>
     </parameter>
     <parameter key="kernel.bundles_metadata" type="collection">
       <parameter key="FrameworkBundle" type="collection">
@@ -55,6 +56,10 @@
       <parameter key="NelmioCorsBundle" type="collection">
         <parameter key="path">/home/sadikh/Bureau/SYMFODEV_PROJET/SymfonyReactAPI/backend/vendor/nelmio/cors-bundle</parameter>
         <parameter key="namespace">Nelmio\CorsBundle</parameter>
+      </parameter>
+      <parameter key="SensioFrameworkExtraBundle" type="collection">
+        <parameter key="path">/home/sadikh/Bureau/SYMFODEV_PROJET/SymfonyReactAPI/backend/vendor/sensio/framework-extra-bundle/src</parameter>
+        <parameter key="namespace">Sensio\Bundle\FrameworkExtraBundle</parameter>
       </parameter>
     </parameter>
     <parameter key="kernel.charset">UTF-8</parameter>
@@ -1370,6 +1375,54 @@
         <argument type="collection">
           <argument type="service_closure" id="debug.security.firewall"/>
           <argument>onKernelFinishRequest</argument>
+        </argument>
+        <argument>0</argument>
+      </call>
+      <call method="addListener">
+        <argument>kernel.controller</argument>
+        <argument type="collection">
+          <argument type="service_closure" id="sensio_framework_extra.controller.listener"/>
+          <argument>onKernelController</argument>
+        </argument>
+        <argument>0</argument>
+      </call>
+      <call method="addListener">
+        <argument>kernel.controller</argument>
+        <argument type="collection">
+          <argument type="service_closure" id="sensio_framework_extra.converter.listener"/>
+          <argument>onKernelController</argument>
+        </argument>
+        <argument>0</argument>
+      </call>
+      <call method="addListener">
+        <argument>kernel.controller</argument>
+        <argument type="collection">
+          <argument type="service_closure" id="sensio_framework_extra.cache.listener"/>
+          <argument>onKernelController</argument>
+        </argument>
+        <argument>0</argument>
+      </call>
+      <call method="addListener">
+        <argument>kernel.response</argument>
+        <argument type="collection">
+          <argument type="service_closure" id="sensio_framework_extra.cache.listener"/>
+          <argument>onKernelResponse</argument>
+        </argument>
+        <argument>0</argument>
+      </call>
+      <call method="addListener">
+        <argument>kernel.controller_arguments</argument>
+        <argument type="collection">
+          <argument type="service_closure" id="sensio_framework_extra.security.listener"/>
+          <argument>onKernelControllerArguments</argument>
+        </argument>
+        <argument>0</argument>
+      </call>
+      <call method="addListener">
+        <argument>kernel.controller_arguments</argument>
+        <argument type="collection">
+          <argument type="service_closure" id="framework_extra_bundle.event.is_granted"/>
+          <argument>onKernelControllerArguments</argument>
         </argument>
         <argument>0</argument>
       </call>
@@ -4806,6 +4859,65 @@
       <tag name="kernel.event_listener" event="kernel.response" method="onResponse" priority="-10"/>
       <tag name="container.hot_path"/>
     </service>
+    <service id="sensio_framework_extra.controller.listener" class="Sensio\Bundle\FrameworkExtraBundle\EventListener\ControllerListener">
+      <tag name="kernel.event_subscriber"/>
+      <tag name="container.hot_path"/>
+      <argument type="service" id="annotations.cached_reader"/>
+    </service>
+    <service id="sensio_framework_extra.converter.listener" class="Sensio\Bundle\FrameworkExtraBundle\EventListener\ParamConverterListener">
+      <tag name="kernel.event_subscriber"/>
+      <tag name="container.hot_path"/>
+      <argument type="service" id="sensio_framework_extra.converter.manager"/>
+      <argument>true</argument>
+    </service>
+    <service id="sensio_framework_extra.converter.manager" class="Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterManager">
+      <call method="add">
+        <argument type="service" id="sensio_framework_extra.converter.doctrine.orm"/>
+        <argument>0</argument>
+        <argument>doctrine.orm</argument>
+      </call>
+      <call method="add">
+        <argument type="service" id="framework_extra_bundle.date_time_param_converter"/>
+        <argument>0</argument>
+        <argument>datetime</argument>
+      </call>
+    </service>
+    <service id="sensio_framework_extra.converter.doctrine.orm" class="Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\DoctrineParamConverter">
+      <tag name="request.param_converter" converter="doctrine.orm"/>
+      <argument type="service" id="doctrine" on-invalid="ignore"/>
+      <argument>null</argument>
+    </service>
+    <service id="framework_extra_bundle.date_time_param_converter" class="Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\DateTimeParamConverter">
+      <tag name="request.param_converter" converter="datetime"/>
+    </service>
+    <service id="sensio_framework_extra.view.guesser" class="Sensio\Bundle\FrameworkExtraBundle\Templating\TemplateGuesser">
+      <argument type="service" id="kernel"/>
+    </service>
+    <service id="sensio_framework_extra.cache.listener" class="Sensio\Bundle\FrameworkExtraBundle\EventListener\HttpCacheListener">
+      <tag name="kernel.event_subscriber"/>
+      <tag name="container.hot_path"/>
+      <tag name="container.hot_path"/>
+    </service>
+    <service id="sensio_framework_extra.security.listener" class="Sensio\Bundle\FrameworkExtraBundle\EventListener\SecurityListener">
+      <tag name="kernel.event_subscriber"/>
+      <tag name="container.hot_path"/>
+      <argument type="service" id="framework_extra_bundle.argument_name_convertor"/>
+      <argument>null</argument>
+      <argument type="service" id="security.authentication.trust_resolver" on-invalid="null"/>
+      <argument type="service" id="security.role_hierarchy" on-invalid="null"/>
+      <argument type="service" id="security.token_storage" on-invalid="null"/>
+      <argument type="service" id="security.authorization_checker" on-invalid="null"/>
+      <argument type="service" id="logger" on-invalid="null"/>
+    </service>
+    <service id="framework_extra_bundle.event.is_granted" class="Sensio\Bundle\FrameworkExtraBundle\EventListener\IsGrantedListener">
+      <tag name="kernel.event_subscriber"/>
+      <tag name="container.hot_path"/>
+      <argument type="service" id="framework_extra_bundle.argument_name_convertor"/>
+      <argument type="service" id="security.authorization_checker" on-invalid="null"/>
+    </service>
+    <service id="framework_extra_bundle.argument_name_convertor" class="Sensio\Bundle\FrameworkExtraBundle\Request\ArgumentNameConverter">
+      <argument type="service" id="argument_metadata_factory"/>
+    </service>
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\ProjetController" class="App\Controller\ProjetController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\ProjetController" class="App\Controller\ProjetController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\ProjetController" class="App\Controller\ProjetController" autowire="true" autoconfigure="true" abstract="true"/>
@@ -5187,6 +5299,12 @@
         <argument key="doctrine" type="service_closure" id="doctrine.orm.default_entity_manager"/>
       </argument>
     </service>
+    <service id=".service_locator.0Fb1YCW" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="productRepository" type="service_closure" id="App\Repository\ProductRepository"/>
+      </argument>
+    </service>
     <service id=".service_locator.BV7GNzV" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -5242,7 +5360,7 @@
         <argument key="passwordHash" type="service_closure" id="security.user_password_hasher"/>
       </argument>
     </service>
-    <service id=".service_locator.Lb78yNb" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.Rio_gPI" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="App\Controller\ProjetController::delete_categorie" type="service_closure" id=".service_locator.rvHSqhb"/>
@@ -5260,6 +5378,7 @@
         <argument key="App\Controller\ProjetController::show" type="service_closure" id=".service_locator.BV7GNzV"/>
         <argument key="App\Controller\ProjetController::show_Categorie" type="service_closure" id=".service_locator.IhDAAJw"/>
         <argument key="App\Controller\ProjetController::show_Fournisseur" type="service_closure" id=".service_locator.NOLKZxq"/>
+        <argument key="App\Controller\ProjetController::test" type="service_closure" id=".service_locator.0Fb1YCW"/>
         <argument key="App\Controller\SecurityController::index" type="service_closure" id=".service_locator.yK21mr."/>
         <argument key="App\Kernel::loadRoutes" type="service_closure" id=".service_locator.xUrKPVU"/>
         <argument key="App\Kernel::registerContainerConfiguration" type="service_closure" id=".service_locator.xUrKPVU"/>
@@ -5280,6 +5399,7 @@
         <argument key="App\Controller\ProjetController:show" type="service_closure" id=".service_locator.BV7GNzV"/>
         <argument key="App\Controller\ProjetController:show_Categorie" type="service_closure" id=".service_locator.IhDAAJw"/>
         <argument key="App\Controller\ProjetController:show_Fournisseur" type="service_closure" id=".service_locator.NOLKZxq"/>
+        <argument key="App\Controller\ProjetController:test" type="service_closure" id=".service_locator.0Fb1YCW"/>
         <argument key="App\Controller\SecurityController:index" type="service_closure" id=".service_locator.yK21mr."/>
         <argument key="kernel:loadRoutes" type="service_closure" id=".service_locator.xUrKPVU"/>
         <argument key="kernel:registerContainerConfiguration" type="service_closure" id=".service_locator.xUrKPVU"/>
@@ -5555,12 +5675,12 @@
       <argument type="service" id="security.token_storage"/>
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
-      <argument type="service" id=".service_locator.Lb78yNb"/>
+      <argument type="service" id=".service_locator.Rio_gPI"/>
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver"/>
     <service id="debug.argument_resolver.not_tagged_controller.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
-      <argument type="service" id=".service_locator.Lb78yNb"/>
+      <argument type="service" id=".service_locator.Rio_gPI"/>
     </service>
     <service id="fos_rest.serializer.form_error_handler.inner" class="JMS\Serializer\Handler\FormErrorHandler">
       <argument>null</argument>
@@ -6358,7 +6478,7 @@
     <service id="Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface" alias="lexik_jwt_authentication.encoder.lcobucci"/>
     <service id="lexik_jwt_authentication.key_loader" alias="lexik_jwt_authentication.key_loader.raw" public="true"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.gSv9zYw" public="true"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.Lb78yNb"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.Rio_gPI"/>
     <service id="session" alias=".session.do-not-use" public="true">
       <deprecated package="symfony/framework-bundle" version="5.3">The "%alias_id%" service and "SessionInterface" alias are deprecated, use "$requestStack-&gt;getSession()" instead.</deprecated>
     </service>
@@ -6373,7 +6493,7 @@
     <service id=".service_locator.0GV1BZZ" alias=".service_locator.gSv9zYw"/>
     <service id=".service_locator.84og9Rn" alias=".service_locator.gt2y.sk"/>
     <service id=".service_locator.oTcGTnZ" alias=".service_locator.p.okWv8"/>
-    <service id=".service_locator.tBYGFV2" alias=".service_locator.Lb78yNb"/>
+    <service id=".service_locator._6Vju2o" alias=".service_locator.Rio_gPI"/>
     <service id=".service_locator.4hi2aOY" alias=".service_locator.bBRwv06"/>
     <service id=".service_locator.0ghLsew" alias=".service_locator.mx0UMmY"/>
     <service id="event_dispatcher" alias="debug.event_dispatcher" public="true"/>
@@ -6406,6 +6526,7 @@
     <service id=".service_locator.1Ivmmq8" alias=".service_locator.Jhh.C5S"/>
     <service id=".service_locator.nW942CT" alias=".service_locator.gt2y.sk"/>
     <service id=".service_locator.YEaw7MA" alias=".service_locator.AUup8zu"/>
+    <service id=".service_locator.sa.k_vl" alias=".service_locator.0Fb1YCW"/>
     <service id=".service_locator.tgzNT_B" alias=".service_locator.BV7GNzV"/>
     <service id=".service_locator.abd0itQ" alias=".service_locator.IhDAAJw"/>
     <service id=".service_locator.iQ5LuKS" alias=".service_locator.NOLKZxq"/>

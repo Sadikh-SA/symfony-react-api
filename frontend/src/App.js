@@ -10,6 +10,8 @@ import Register from "./components/register.component";
 //import Home from "./components/home.component";
 import Dashboard from "./components/dashboard.component";
 import AddProduit from "./components/addProduit.component";
+import ShowProduit from "./components/showProduit.component";
+import EditProduit from "./components/editProduit.component";
 // import BoardUser from "./components/board-user.component";
 // import BoardModerator from "./components/board-moderator.component";
 // import BoardAdmin from "./components/board-admin.component";
@@ -119,11 +121,13 @@ class App extends Component {
         <div className="container mt-3">
           <Routes>
             <Route path="/" element={<Login />} />
-            <Route path="/home" element={<Login />} />
+            <Route path="/home" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/produit" element={<Dashboard />} />
             <Route path="/addProduit" element={<AddProduit />} />
+            <Route path="/showProduit/:id" element={<ShowProduit />} />
+            <Route path="/editProduit/:id" element={<EditProduit />} />
           </Routes>
         </div>
       </div>

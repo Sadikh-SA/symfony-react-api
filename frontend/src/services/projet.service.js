@@ -16,8 +16,20 @@ class ProjetService {
     return axios.get(API_URL + 'produit', { headers: authHeader() });
   }
 
+  showProduit(id) {
+    return axios.get(API_URL + `produit/${id}`, { headers: authHeader() });
+  }
+
+  deleteProduit(id) {
+    return axios.delete(API_URL + `produit/${id}`, { headers: authHeader() });
+  }
+
   AddProduit(data) {
     return axios.post(API_URL + 'produit', data , { headers: authHeader() });
+  }
+
+  editProduit(id, data) {
+    return axios.patch(API_URL + `produit/${id}`, data,  { headers: authHeader() });
   }
 
 }

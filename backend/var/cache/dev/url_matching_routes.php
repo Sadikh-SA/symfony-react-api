@@ -20,6 +20,7 @@ return [
             [['_route' => 'api_app_projet_fournisseurs', '_controller' => 'App\\Controller\\ProjetController::indexFour'], null, ['GET' => 0], null, false, false, null],
             [['_route' => 'api_project_fournisseur_new', '_controller' => 'App\\Controller\\ProjetController::new_Fournisseur'], null, ['POST' => 0], null, false, false, null],
         ],
+        '/api/projets' => [[['_route' => 'api_tets', '_controller' => 'App\\Controller\\ProjetController::test'], null, ['POST' => 0], null, false, false, null]],
         '/api/register' => [[['_route' => 'api_app_security', '_controller' => 'App\\Controller\\SecurityController::index'], null, ['POST' => 0], null, false, false, null]],
         '/api/login_check' => [[['_route' => 'api_login_check'], null, null, null, false, false, null]],
     ],
